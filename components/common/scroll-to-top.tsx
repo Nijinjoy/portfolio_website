@@ -17,7 +17,7 @@ export function ScrollToTop() {
   return visible ? (
     <Button
       aria-label="Back to top"
-      className="fixed bottom-6 right-6 z-50"
+      className="fixed bottom-6 right-6 z-50 bg-black/70 backdrop-blur-md"
       size="icon"
       variant="secondary"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

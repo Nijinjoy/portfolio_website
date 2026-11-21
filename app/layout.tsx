@@ -1,38 +1,30 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Inter, Poppins } from "next/font/google";
 import Script from "next/script";
+import { Anton, Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/components/common/providers";
 import { siteConfig, seoKeywords } from "@/constants/site";
+import { absoluteUrl } from "@/lib/utils";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  display: "swap",
-  variable: "--font-poppins",
-});
+const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton", display: "swap" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0F172A",
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name} | ${siteConfig.role}`,
+    default: `${siteConfig.name} | Senior Mobile Application Developer`,
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    "Premium portfolio specializing in React Native, React.js, TypeScript, Firebase, ERP, HRMS, and cross-platform mobile applications.",
+    "Premium portfolio for a Senior Mobile Application Developer specializing in React Native, Flutter, React.js, TypeScript, Firebase, ERP, HRMS, and cross-platform mobile applications.",
   keywords: seoKeywords,
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
@@ -40,14 +32,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: siteConfig.url,
-    title: `${siteConfig.name} | ${siteConfig.role}`,
+    title: `${siteConfig.name} | Senior Mobile Application Developer`,
     description: siteConfig.summary,
     siteName: `${siteConfig.name} Portfolio`,
+    images: [{ url: absoluteUrl("/og-image.png"), width: 1200, height: 630, alt: siteConfig.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | ${siteConfig.role}`,
+    title: `${siteConfig.name} | Senior Mobile Application Developer`,
     description: siteConfig.summary,
+    images: [absoluteUrl("/og-image.png")],
   },
   robots: {
     index: true,
@@ -75,8 +69,15 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
-      <body>
+    <html
+      lang="en"
+      className={`dark ${anton.variable} ${geist.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="bg-background font-sans text-foreground antialiased">
+        <noscript>
+          <style>{"#preloader{display:none}"}</style>
+        </noscript>
         <Script
           id="person-jsonld"
           type="application/ld+json"

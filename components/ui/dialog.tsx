@@ -20,10 +20,10 @@ export function DialogContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-md data-[state=open]:animate-in" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-md" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 max-h-[86vh] w-[min(92vw,980px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl border border-border bg-background/95 dark:border-white/10 p-6 shadow-2xl backdrop-blur-xl focus:outline-none",
+          "fixed left-1/2 top-1/2 z-[60] max-h-[86vh] w-[min(92vw,1040px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-3xl border border-white/10 bg-[#0a0a0a] p-6 shadow-2xl focus:outline-none sm:p-10",
           className,
         )}
       >
@@ -31,7 +31,7 @@ export function DialogContent({
         <DialogPrimitive.Close asChild>
           <Button
             aria-label="Close project details"
-            className="absolute right-4 top-4"
+            className="absolute right-4 top-4 sm:right-6 sm:top-6"
             size="icon"
             variant="secondary"
           >

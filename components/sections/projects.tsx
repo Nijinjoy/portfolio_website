@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { ArrowRight, ExternalLink, Github, Globe } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa6";
-import { SectionHeading } from "@/components/common/section-heading";
+import { SectionHeading, SectionStat } from "@/components/common/section-heading";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,196 +14,201 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { projects } from "@/data/portfolio";
-import { cn } from "@/lib/utils";
+import { projectCategories, projects } from "@/data/portfolio";
+import type { Project } from "@/types/portfolio";
+import { cn, pad } from "@/lib/utils";
 
-const MAX_CARD_TECH = 3;
+const matches = (project: Project, category: string) =>
+  category === "All" || project.category === category || project.techStack.includes(category);
 
-const projectCategories = ["All", "React Native", "Vue.js"];
+// Only offer filters that actually have projects behind them.
+const categories = projectCategories
+  .map((label) => ({ label, count: projects.filter((project) => matches(project, label)).length }))
+  .filter((category) => category.count > 0);
+
+function StoreLinks({ project }: { project: Project }) {
+  return (
+    <>
+      {project.links.github ? (
+        <Button asChild size="sm" variant="secondary">
+          <a href={project.links.github} target="_blank" rel="noreferrer">
+            <Github className="h-3.5 w-3.5" />
+            GitHub
+          </a>
+        </Button>
+      ) : null}
+      {project.links.demo ? (
+        <Button asChild size="sm" variant="secondary">
+          <a href={project.links.demo} target="_blank" rel="noreferrer">
+            <ExternalLink className="h-3.5 w-3.5" />
+            Website
+          </a>
+        </Button>
+      ) : null}
+      {project.links.playStore ? (
+        <Button asChild size="sm" variant="secondary">
+          <a href={project.links.playStore} target="_blank" rel="noreferrer">
+            <FaGooglePlay className="h-3.5 w-3.5" />
+            Play Store
+          </a>
+        </Button>
+      ) : null}
+      {project.links.appStore ? (
+        <Button asChild size="sm" variant="secondary">
+          <a href={project.links.appStore} target="_blank" rel="noreferrer">
+            <FaApple className="h-3.5 w-3.5" />
+            App Store
+          </a>
+        </Button>
+      ) : null}
+    </>
+  );
+}
 
 export function ProjectsSection() {
   const [category, setCategory] = useState("All");
-  const filtered = useMemo(
-    () =>
-      projects.filter(
-        (project) =>
-          category === "All" ||
-          project.category === category ||
-          project.techStack.includes(category),
-      ),
-    [category],
-  );
+  const filtered = useMemo(() => projects.filter((project) => matches(project, category)), [category]);
 
   return (
-    <section id="projects" className="section">
+    <section id="projects" className="border-t border-white/10 bg-black py-24 md:py-32">
       <div className="container-premium">
         <SectionHeading
-          eyebrow="Projects"
-          title="Real apps. Real users. Real impact."
-          description="Apps people download and use. Open a case study to see how each one was built."
+          index="05"
+          label="Work"
+          title="Selected work"
+          description="Mobile and web products built for real workflows. Open any project for architecture, challenges, and my contributions."
+          aside={<SectionStat value={pad(projects.length)} label="Projects / Featured" />}
         />
-        <div className="mb-8 flex gap-2 overflow-x-auto pb-3">
-          {projectCategories.map((item) => (
-            <button
-              key={item}
-              className={cn(
-                "focus-ring whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition",
-                category === item
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border dark:border-white/10 bg-muted/50 dark:bg-white/[0.05] text-muted-foreground hover:border-primary/50 hover:text-foreground",
-              )}
-              onClick={() => setCategory(item)}
-            >
-              {item}
-            </button>
-          ))}
+
+        <div role="tablist" aria-label="Project categories" className="mb-10 flex gap-2 overflow-x-auto pb-2">
+          {categories.map((item, index) => {
+            const selected = category === item.label;
+            return (
+              <button
+                key={item.label}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setCategory(item.label)}
+                className={cn(
+                  "focus-ring flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors",
+                  selected
+                    ? "border-white bg-white text-black"
+                    : "border-white/10 text-white/60 hover:border-white/30 hover:text-white",
+                )}
+              >
+                <span className="font-mono text-[11px] opacity-60">{pad(index + 1)}</span>
+                {item.label}
+                <span className="font-mono text-[11px] opacity-60">({item.count})</span>
+              </button>
+            );
+          })}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {filtered.map((project) => (
-            <Dialog key={project.title}>
-              <motion.article
-                layout
-                whileHover={{ y: -6 }}
-                className="glass-panel flex h-full flex-col overflow-hidden rounded-2xl"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-900">
-                  <Image
-                    src={project.image}
-                    alt={`${project.title} app preview`}
-                    fill
-                    className={cn(
-                      project.imageFit === "contain" ? "object-contain p-6" : "object-cover",
-                    )}
-                  />
-                </div>
-                <div className="flex flex-1 flex-col p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-ink">
-                    {project.category}
-                  </p>
-                  <h3 className="mt-3 font-display text-xl font-bold">{project.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    {project.description}
-                  </p>
-                  <p className="mt-4 text-xs font-medium text-muted-foreground">
-                    {project.techStack.slice(0, MAX_CARD_TECH).join(" · ")}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-5 dark:border-white/10">
-                    <div className="flex gap-2">
-                      {[
-                        { href: project.links.github, label: "GitHub", Icon: Github },
-                        { href: project.links.demo, label: "Live site", Icon: Globe },
-                        { href: project.links.playStore, label: "Google Play", Icon: FaGooglePlay },
-                        { href: project.links.appStore, label: "App Store", Icon: FaApple },
-                      ]
-                        .filter((link) => link.href)
-                        .map(({ href, label, Icon }) => (
-                          <Button
-                            key={label}
-                            asChild
-                            size="icon"
-                            variant="secondary"
-                            className="h-9 w-9 min-h-9"
-                          >
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noreferrer"
-                              aria-label={`${project.title} on ${label}`}
-                              title={label}
-                            >
-                              <Icon className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        ))}
+        <motion.div layout className="grid gap-6 md:grid-cols-2">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((project) => {
+              const number = pad(projects.indexOf(project) + 1);
+              const fit = project.imageFit === "contain" ? "object-contain p-8" : "object-cover";
+              return (
+                <Dialog key={project.title}>
+                  <motion.article
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    transition={{ duration: 0.4 }}
+                    className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/[0.02] transition-colors hover:border-white/25"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-[#0d0d0d]">
+                      <Image
+                        src={project.image}
+                        alt={`${project.title} app preview`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className={cn("transition-transform duration-700 group-hover:scale-[1.03]", fit)}
+                      />
                     </div>
-                    <DialogTrigger asChild>
-                      <Button size="sm" variant="ghost" className="text-foreground">
-                        Case Study
-                        <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
-                      </Button>
-                    </DialogTrigger>
-                  </div>
-                </div>
-              </motion.article>
-
-              <DialogContent>
-                <div className="pr-10">
-                  <DialogTitle className="font-display text-2xl font-bold">
-                    {project.title}
-                  </DialogTitle>
-                  <DialogDescription className="mt-2 text-muted-foreground">
-                    {project.description}
-                  </DialogDescription>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {project.links.playStore ? (
-                    <Button asChild size="sm" variant="secondary">
-                      <a href={project.links.playStore} target="_blank" rel="noreferrer">
-                        <FaGooglePlay className="h-3.5 w-3.5" />
-                        Play Store
-                      </a>
-                    </Button>
-                  ) : null}
-                  {project.links.appStore ? (
-                    <Button asChild size="sm" variant="secondary">
-                      <a href={project.links.appStore} target="_blank" rel="noreferrer">
-                        <FaApple className="h-3.5 w-3.5" />
-                        App Store
-                      </a>
-                    </Button>
-                  ) : null}
-                  {project.links.demo ? (
-                    <Button asChild size="sm" variant="secondary">
-                      <a href={project.links.demo} target="_blank" rel="noreferrer">
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        Live Site
-                      </a>
-                    </Button>
-                  ) : null}
-                </div>
-                <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-                  <div className="relative aspect-[16/11] overflow-hidden rounded-2xl bg-slate-900">
-                    <Image
-                      src={project.image}
-                      alt={`${project.title} architecture preview`}
-                      fill
-                      className={cn(
-                        project.imageFit === "contain" ? "object-contain p-6" : "object-cover",
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-4">
-                    {[
-                      ["Architecture", project.details.architecture],
-                      ["Challenges", project.details.challenges],
-                      ["Solutions", project.details.solutions],
-                      ["Performance", project.details.performance],
-                    ].map(([label, text]) => (
-                      <div
-                        key={label}
-                        className="rounded-2xl border border-border dark:border-white/10 bg-muted/40 dark:bg-white/[0.04] p-4"
-                      >
-                        <h4 className="font-semibold text-accent-ink">{label}</h4>
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+                    <div className="flex flex-1 flex-col p-6 sm:p-8">
+                      <div className="flex items-center justify-between gap-4">
+                        <span className="mono-label">Project / {number}</span>
+                        <span className="chip">{project.category}</span>
                       </div>
-                    ))}
-                    <div className="rounded-2xl border border-border dark:border-white/10 bg-muted/40 dark:bg-white/[0.04] p-4">
-                      <h4 className="font-semibold text-accent-ink">My Contributions</h4>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {project.details.contributions.map((item) => (
-                          <span key={item} className="chip-accent">
-                            {item}
+                      <h3 className="mt-5 font-display text-4xl uppercase leading-none sm:text-5xl">{project.title}</h3>
+                      <p className="mt-4 flex-1 text-sm leading-7 text-white/60 sm:text-base">{project.description}</p>
+                      <div className="mt-6 flex flex-wrap gap-2">
+                        {project.techStack.map((tech) => (
+                          <span key={tech} className="chip">
+                            {tech}
                           </span>
                         ))}
                       </div>
+                      <div className="mt-6 flex flex-wrap gap-2 border-t border-white/10 pt-6">
+                        <DialogTrigger asChild>
+                          <Button size="sm">
+                            Case study
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                          </Button>
+                        </DialogTrigger>
+                        <StoreLinks project={project} />
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          ))}
-        </div>
+                  </motion.article>
+
+                  <DialogContent>
+                    <p className="mono-label">Project / {number} · {project.category}</p>
+                    <div className="mt-4 pr-12">
+                      <DialogTitle className="font-display text-5xl uppercase leading-none sm:text-6xl">
+                        {project.title}
+                        <span className="text-white/25">.</span>
+                      </DialogTitle>
+                      <DialogDescription className="mt-4 max-w-2xl text-white/60">{project.description}</DialogDescription>
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      <StoreLinks project={project} />
+                    </div>
+                    <div className="mt-8 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+                      <div className="relative aspect-[16/11] overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0d]">
+                        <Image
+                          src={project.image}
+                          alt={`${project.title} preview`}
+                          fill
+                          sizes="(max-width: 1024px) 92vw, 480px"
+                          className={fit}
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        {[
+                          ["Architecture", project.details.architecture],
+                          ["Challenges", project.details.challenges],
+                          ["Solutions", project.details.solutions],
+                          ["Performance", project.details.performance],
+                        ].map(([label, text], index) => (
+                          <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                            <h4 className="mono-label">
+                              {pad(index + 1)} / {label}
+                            </h4>
+                            <p className="mt-3 text-sm leading-7 text-white/65">{text}</p>
+                          </div>
+                        ))}
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                          <h4 className="mono-label">05 / My contributions</h4>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {project.details.contributions.map((item) => (
+                              <span key={item} className="chip">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

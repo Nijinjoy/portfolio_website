@@ -2,34 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Editorial dark theme — black canvas, off-white type, hairline borders. */
 :root {
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --muted: 214 32% 93%;
-  --muted-foreground: 215 19% 38%;
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
-  --accent: 199 89% 48%;
+  color-scheme: dark;
+  --background: 0 0% 2%;
+  --foreground: 228 33% 95%;
+  --card: 0 0% 4%;
+  --card-foreground: 228 33% 95%;
+  --muted: 0 0% 10%;
+  --muted-foreground: 225 13% 62%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+  --accent: 229 100% 68%;
   --accent-foreground: 0 0% 100%;
-  --accent-ink: 221 83% 45%;
-  --border: 214 32% 88%;
-}
-
-.dark {
-  --background: 224 30% 5%;
-  --foreground: 210 40% 98%;
-  --card: 222 47% 9%;
-  --card-foreground: 210 40% 98%;
-  --muted: 217 33% 16%;
-  --muted-foreground: 215 20% 70%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 0 0% 100%;
-  --accent: 199 89% 48%;
-  --accent-foreground: 0 0% 100%;
-  --accent-ink: 199 95% 74%;
-  --border: 217 33% 20%;
+  --border: 0 0% 15%;
 }
 
 * {
@@ -38,67 +24,70 @@
 
 html {
   scroll-behavior: auto;
-  scroll-padding-top: 80px;
+  scroll-padding-top: 96px;
+  background: #050505;
 }
 
 body {
   min-height: 100vh;
-  background: hsl(var(--background));
+  background: #050505;
   color: hsl(var(--foreground));
-  font-family:
-    var(--font-inter),
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  font-feature-settings: "cv11", "ss01";
-  letter-spacing: -0.006em;
+  font-family: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
-
-
 ::selection {
-  background: hsl(var(--primary) / 0.25);
+  background: #fff;
+  color: #000;
 }
 
 @layer components {
   .container-premium {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
-  }
-
-  .section {
-    @apply border-t border-border py-20 sm:py-28 dark:border-white/10;
+    @apply mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12;
   }
 
   .glass-panel {
-    @apply border border-border bg-card dark:border-white/10 dark:bg-white/[0.03];
+    @apply border border-white/10 bg-white/[0.03];
+  }
+
+  .mono-label {
+    @apply font-mono text-[11px] uppercase tracking-[0.2em] text-white/45;
+  }
+
+  .display-title {
+    @apply font-display uppercase leading-[0.9] tracking-[-0.01em];
   }
 
   .chip {
-    @apply inline-flex items-center rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground dark:border-white/10 dark:bg-white/[0.05];
+    @apply inline-flex items-center rounded-full border border-white/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-white/60;
   }
 
-  .chip-accent {
-    @apply inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground dark:border-white/10;
-  }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-sky-300;
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.35);
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black;
   }
 
   .input {
-    @apply focus-ring w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground dark:border-white/10 dark:bg-white/[0.04];
+    @apply w-full border-0 border-b border-white/15 bg-transparent px-0 py-3 text-base text-white outline-none transition-colors placeholder:text-white/25 focus:border-white;
   }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: translate3d(-3%, -40%, 0);
+  }
+  to {
+    transform: translate3d(3%, 60%, 0);
+  }
+}
+
+.hero-drift {
+  animation: hero-drift 9s ease-in-out infinite alternate;
 }
 
 @media (prefers-reduced-motion: reduce) {

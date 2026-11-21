@@ -17,7 +17,7 @@ export const siteConfig = {
   whatsapp: "https://wa.me/971509050493",
   resumeUrl: "/resume.pdf",
   summary:
-    "I build scalable, high-performance cross-platform mobile applications with clean architecture, reusable components, modern UI/UX, and optimized performance.",
+    "I build scalable, high-performance cross-platform mobile applications and modern web solutions with clean architecture, reusable components, modern UI/UX, and optimized performance.",
 };
 
 export const navItems: NavItem[] = [

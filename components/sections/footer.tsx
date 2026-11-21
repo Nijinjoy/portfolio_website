@@ -1,62 +1,74 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowUp, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
 import { navItems, siteConfig } from "@/constants/site";
+import { pad } from "@/lib/utils";
+
+const socials = [
+  { icon: Linkedin, href: siteConfig.linkedin, label: "LinkedIn" },
+  { icon: Github, href: siteConfig.github, label: "GitHub" },
+  { icon: MessageCircle, href: siteConfig.whatsapp, label: "WhatsApp" },
+  { icon: Mail, href: `mailto:${siteConfig.email}`, label: "Email" },
+];
 
 export function Footer() {
   return (
-    <footer className="border-t border-border dark:border-white/10 py-10">
-      <div className="container-premium grid gap-8 md:grid-cols-[1fr_1.4fr_0.8fr] md:items-center">
-        <div>
-          <a href="#home" className="font-display text-lg font-bold gradient-text">
-            Nijin Joy
-          </a>
-          <p className="mt-2 max-w-sm text-xs leading-6 text-muted-foreground">
-            {siteConfig.role} building React Native, Next.js, Vue.js &amp; WordPress products.
-          </p>
-          <a
-            href="#contact"
-            className="group mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink transition hover:text-sky-200"
-          >
-            Let&apos;s build something great
-            <ArrowUpRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
+    <footer className="relative overflow-hidden border-t border-white/10 bg-black pt-20">
+      <div className="container-premium">
+        <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr]">
+          <div>
+            <p className="mono-label">Connect with me</p>
+            <p className="mt-4 font-display text-5xl uppercase leading-none sm:text-6xl">
+              Find me online<span className="text-white/25">.</span>
+            </p>
+            <div className="mt-8 flex gap-3">
+              {socials.map(({ icon: Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className="focus-ring grid h-12 w-12 place-items-center rounded-full border border-white/15 text-white/70 transition-colors hover:bg-white hover:text-black"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mono-label">Explore / Navigation</p>
+            <ul className="mt-6 grid grid-cols-2 gap-x-8">
+              {navItems.map((item, index) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="flex items-baseline gap-3 border-b border-white/10 py-3 text-lg text-white/70 transition-colors hover:text-white"
+                  >
+                    <span className="font-mono text-xs text-white/35">{pad(index + 1)}</span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="grid grid-cols-3 justify-items-center gap-2 sm:grid-cols-6 md:justify-items-center">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="relative w-fit text-xs font-medium text-muted-foreground transition after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-primary after:transition-all after:duration-300 hover:text-foreground hover:after:w-full"
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
-        <div className="flex gap-2 md:justify-end">
-          {[
-            [Github, siteConfig.github, "GitHub"],
-            [Linkedin, siteConfig.linkedin, "LinkedIn"],
-            [Mail, `mailto:${siteConfig.email}`, "Email"],
-          ].map(([Icon, href, label]) => (
-            <motion.a
-              key={String(label)}
-              href={String(href)}
-              aria-label={String(label)}
-              whileHover={{ y: -4, scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="grid h-9 w-9 place-items-center rounded-full border border-border dark:border-white/10 bg-muted/50 dark:bg-white/[0.05] text-muted-foreground transition-colors hover:border-primary/50 hover:text-accent-ink hover:shadow-[0_0_16px_rgba(56,189,248,0.4)]"
-            >
-              <Icon className="h-3.5 w-3.5" />
-            </motion.a>
-          ))}
-        </div>
-      </div>
-      <div className="container-premium mt-5 flex flex-col items-center gap-1 border-t border-border dark:border-white/10 pt-4 text-center text-xs text-muted-foreground">
-        <p>
-          © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+
+        <p
+          aria-hidden="true"
+          className="mt-20 select-none whitespace-nowrap font-display text-[min(25vw,22rem)] uppercase leading-[0.8] tracking-[-0.02em] text-white"
+        >
+          {siteConfig.name}
         </p>
+
+        <div className="mono-label mt-10 flex flex-col gap-4 border-t border-white/10 py-6 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+          </span>
+          <span>{siteConfig.location}</span>
+          <a href="#home" className="inline-flex items-center gap-2 transition-colors hover:text-white">
+            Back to top
+            <ArrowUp className="h-3.5 w-3.5" />
+          </a>
+        </div>
       </div>
     </footer>
   );
